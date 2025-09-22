@@ -348,7 +348,7 @@ body {
     position: relative;
     background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);
     border-radius: 0.75rem;
-    height: 600px;
+    height: 900px;
     overflow: hidden;
     border: 1px solid var(--border-color);
 }
@@ -646,4 +646,5 @@ body {
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.6; }
+
 }
