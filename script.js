@@ -292,7 +292,6 @@ function vibrateFeedback(pattern = [10]) {
 // Загрузка SVG карты
 async function loadMetroMap() {
     try {
-        // Загружаем map.svg из папки с index.html
         const response = await fetch('map.svg');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -305,12 +304,14 @@ async function loadMetroMap() {
             
             svgElement = container.querySelector('svg');
             if (svgElement) {
-                svgElement.style.width = '500%';
-                svgElement.style.height = '500%';
+                // ВАЖНОЕ ИЗМЕНЕНИЕ: Динамически корректируем viewBox для показа всего контента
+                fixSVGViewBox();
+                
+                svgElement.style.width = '100%';
+                svgElement.style.height = '100%';
                 svgElement.style.cursor = isMobile ? 'default' : 'grab';
                 svgElement.style.touchAction = 'none';
                 
-                // Настраиваем станции в загруженном SVG
                 setupStationsFromSVG();
                 setupSVGInteractivity();
                 applyHeatmap();
@@ -320,7 +321,6 @@ async function loadMetroMap() {
         console.error('Ошибка загрузки карты метро:', error);
         console.log('Переключаюсь на демо-карту...');
         
-        // Fallback на демо-карту если map.svg не найден
         try {
             const svgContent = createDemoSVG();
             const container = document.getElementById('svg-container');
@@ -346,7 +346,74 @@ async function loadMetroMap() {
         }
     }
 }
-
+// Функция для исправления viewBox чтобы показать всю карту включая верхнюю часть
+function fixSVGViewBox() {
+    if (!svgElement) return;
+    
+    // Получаем все элементы с координатами
+    const allElements = svgElement.querySelectorAll('circle, path, line, rect, text, ellipse, polygon, polyline');
+    
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    
+    allElements.forEach(el => {
+        // Для circle элементов
+        if (el.tagName === 'circle') {
+            const cx = parseFloat(el.getAttribute('cx') || 0);
+            const cy = parseFloat(el.getAttribute('cy') || 0);
+            const r = parseFloat(el.getAttribute('r') || 0);
+            
+            minX = Math.min(minX, cx - r);
+            minY = Math.min(minY, cy - r);
+            maxX = Math.max(maxX, cx + r);
+            maxY = Math.max(maxY, cy + r);
+        }
+        // Для path элементов (приблизительно)
+        else if (el.tagName === 'path') {
+            const d = el.getAttribute('d');
+            if (d) {
+                // Простой парсинг для получения примерных границ
+                const numbers = d.match(/-?\d+\.?\d*/g);
+                if (numbers) {
+                    for (let i = 0; i < numbers.length; i += 2) {
+                        const x = parseFloat(numbers[i]);
+                        const y = parseFloat(numbers[i + 1] || 0);
+                        if (!isNaN(x) && !isNaN(y)) {
+                            minX = Math.min(minX, x);
+                            minY = Math.min(minY, y);
+                            maxX = Math.max(maxX, x);
+                            maxY = Math.max(maxY, y);
+                        }
+                    }
+                }
+            }
+        }
+        // Для text элементов
+        else if (el.tagName === 'text') {
+            const x = parseFloat(el.getAttribute('x') || 0);
+            const y = parseFloat(el.getAttribute('y') || 0);
+            minX = Math.min(minX, x - 50);
+            minY = Math.min(minY, y - 20);
+            maxX = Math.max(maxX, x + 50);
+            maxY = Math.max(maxY, y + 20);
+        }
+    });
+    
+    // Добавляем отступы
+    const padding = 50;
+    minX -= padding;
+    minY -= padding;
+    maxX += padding;
+    maxY += padding;
+    
+    // Обновляем viewBox для включения всего контента
+    const width = maxX - minX;
+    const height = maxY - minY;
+    
+    // Устанавливаем новый viewBox который включает отрицательные координаты
+    svgElement.setAttribute('viewBox', `${minX} ${minY} ${width} ${height}`);
+    
+    console.log(`SVG ViewBox исправлен: ${minX} ${minY} ${width} ${height}`);
+}
 // Настройка станций в загруженном SVG
 function setupStationsFromSVG() {
     if (!svgElement) return;
@@ -1088,4 +1155,5 @@ if (document.readyState === 'loading') {
 }
 
 // Start real-time updates
+
 startRealTimeUpdates();
