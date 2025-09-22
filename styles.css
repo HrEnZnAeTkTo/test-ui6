@@ -352,7 +352,7 @@ body {
     overflow: hidden;
     border: 1px solid var(--border-color);
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
 }
 
@@ -651,4 +651,5 @@ body {
     50% { opacity: 0.6; }
 
 }
+
 
