@@ -351,6 +351,9 @@ body {
     height: 900px;
     overflow: hidden;
     border: 1px solid var(--border-color);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 
 [data-theme="dark"] .metro-map {
@@ -648,3 +651,4 @@ body {
     50% { opacity: 0.6; }
 
 }
+
