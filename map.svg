@@ -4,6 +4,7 @@
    xlmns="http://www.w3.org/2000/svg"
    width="1920"
    height="896"
+   viewBox="-400 -600 2400 2400"
    style="background-color: rgb(250, 255, 250);"
    id="svg15"
    sodipodi:docname="map.svg"
