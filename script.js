@@ -834,13 +834,19 @@ function zoomMap(factor) {
 function centerMap() {
     panX = 0;
     panY = 0;
-    currentZoom = 1;
+    currentZoom = 0.8; // Изменено с 1 на 0.8 для лучшего начального вида
     updateTransform();
     
     const coordDisplay = document.getElementById('coord-display');
     if (coordDisplay) {
         coordDisplay.textContent = showHeatmap ? 'Тепловая карта: инциденты за 24ч' : 'Обычный режим карты';
     }
+    
+    // Закрываем мобильные контролы после действия
+    if (isMobile && mobileControlsOpen) {
+        setTimeout(toggleMobileControls, 300);
+    }
+}
     
     // Close mobile controls after action
     if (isMobile && mobileControlsOpen) {
@@ -851,7 +857,7 @@ function centerMap() {
 function resetView() {
     panX = 0;
     panY = 0;
-    currentZoom = 1;
+    currentZoom = 0.8; // Изменено с 1 на 0.8
     showHeatmap = true;
     updateTransform();
     applyHeatmap();
@@ -861,7 +867,7 @@ function resetView() {
         coordDisplay.textContent = 'Тепловая карта: инциденты за 24ч';
     }
     
-    // Reset mobile button states
+    // Сброс состояния мобильных кнопок
     if (isMobile) {
         const heatmapButton = document.querySelector('.mobile-control-btn:nth-child(4)');
         if (heatmapButton) {
@@ -870,7 +876,7 @@ function resetView() {
         }
     }
     
-    // Close mobile controls after action
+    // Закрываем мобильные контролы после действия
     if (isMobile && mobileControlsOpen) {
         setTimeout(toggleMobileControls, 300);
     }
@@ -878,15 +884,15 @@ function resetView() {
 
 function updateTransform() {
     if (svgElement) {
-        // Use transform3d for better mobile performance
-        const transform = `translate3d(${panX}px, ${panY}px, 0) scale(${currentZoom})`;
+        // Используем transform для лучшей производительности
+        const transform = `translate(${panX}px, ${panY}px) scale(${currentZoom})`;
         svgElement.style.transform = transform;
-        svgElement.style.transformOrigin = 'center center';
+        svgElement.style.transformOrigin = '50% 50%'; // Центрируем от центра
         
-        // Add will-change for better mobile performance during animations
+        // Оптимизация производительности
         svgElement.style.willChange = 'transform';
         
-        // Remove will-change after animation to save resources
+        // Убираем will-change после анимации для экономии ресурсов
         setTimeout(() => {
             if (svgElement) {
                 svgElement.style.willChange = 'auto';
@@ -1157,3 +1163,4 @@ if (document.readyState === 'loading') {
 // Start real-time updates
 
 startRealTimeUpdates();
+
