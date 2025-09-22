@@ -305,8 +305,8 @@ async function loadMetroMap() {
             
             svgElement = container.querySelector('svg');
             if (svgElement) {
-                svgElement.style.width = '700%';
-                svgElement.style.height = '700%';
+                svgElement.style.width = '100%';
+                svgElement.style.height = '100%';
                 svgElement.style.cursor = isMobile ? 'default' : 'grab';
                 svgElement.style.touchAction = 'none';
                 
@@ -1090,3 +1090,4 @@ if (document.readyState === 'loading') {
 // Start real-time updates
 
 startRealTimeUpdates();
+
