@@ -346,6 +346,7 @@ async function loadMetroMap() {
         }
     }
 }
+
 // Функция для исправления viewBox чтобы показать всю карту включая верхнюю часть
 function fixSVGViewBox() {
     if (!svgElement) return;
@@ -414,6 +415,7 @@ function fixSVGViewBox() {
     
     console.log(`SVG ViewBox исправлен: ${minX} ${minY} ${width} ${height}`);
 }
+
 // Настройка станций в загруженном SVG
 function setupStationsFromSVG() {
     if (!svgElement) return;
@@ -831,6 +833,7 @@ function zoomMap(factor) {
     }
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ centerMap (была дублирована)
 function centerMap() {
     panX = 0;
     panY = 0;
@@ -843,12 +846,6 @@ function centerMap() {
     }
     
     // Закрываем мобильные контролы после действия
-    if (isMobile && mobileControlsOpen) {
-        setTimeout(toggleMobileControls, 300);
-    }
-}
-    
-    // Close mobile controls after action
     if (isMobile && mobileControlsOpen) {
         setTimeout(toggleMobileControls, 300);
     }
@@ -1161,6 +1158,4 @@ if (document.readyState === 'loading') {
 }
 
 // Start real-time updates
-
 startRealTimeUpdates();
-
